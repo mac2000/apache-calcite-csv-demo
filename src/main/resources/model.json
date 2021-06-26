@@ -1,0 +1,10 @@
+{
+  "version": "1.0",
+  "defaultSchema": "DEMO",
+  "schemas": [{
+    "name": "DEMO",
+    "type": "custom",
+    "factory": "ua.net.marchenko.csv.calcite.CsvSchemaFactory",
+    "operand": {}
+  }]
+}

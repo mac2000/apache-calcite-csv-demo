@@ -1,4 +1,4 @@
 # Demo
 POST http://localhost:8080/query
 
-select * from movies
+select * from movies where id = 2

@@ -6,8 +6,62 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Apache Calcite Demo</title>
+    <style>
+        textarea {
+            width: 100%;
+        }
+    </style>
 </head>
 <body>
-<h3>Hello World</h3>
+<form>
+    <fieldset>
+        <legend>Request <input type="submit" value="Submit"></legend>
+        <textarea name="query" id="query" cols="30" rows="10" required>select * from movies</textarea>
+    </fieldset>
+    <fieldset>
+        <legend>Response</legend>
+        <table id="results" cellspacing="0" cellpadding="2" border="1">
+            <tr>
+                <td>run query</td>
+            </tr>
+        </table>
+    </fieldset>
+</form>
+<script>
+    const textarea = document.querySelector('textarea')
+
+    const query = async (body) => {
+        const url = 'http://localhost:8080/query'
+        const method = 'POST'
+        const response = await fetch(url, {method, body})
+        const json = await response.json()
+        console.log(json)
+        return json
+    }
+
+    const render = rows => {
+        const results = document.getElementById('results')
+        if (!rows || !Array.isArray(rows)) {
+            results.innerHTML = `<tr><td>${rows.message}</td></tr>`
+        }
+
+        const header = '<tr>' + Object.keys(rows[0]).map(key => `<th>${key}</th>`).join('') + '</tr>'
+        const cells = rows.map(row => '<tr>' + Object.keys(row).map(key => `<td>${row[key]}</td>`).join('') + '</tr>').join('')
+        results.innerHTML = header + cells
+    }
+
+    textarea.addEventListener('keyup', async event => {
+        if (event.code === 'Enter' && event.ctrlKey) {
+            const rows = await query(textarea.value)
+            render(rows)
+        }
+    })
+
+    document.querySelector('form').addEventListener('submit', async event => {
+        event && event.preventDefault()
+        const rows = await query(textarea.value)
+        render(rows)
+    })
+</script>
 </body>
 </html>
